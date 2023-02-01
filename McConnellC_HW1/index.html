@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+        
+        <title>McConnellC_HW1</title>
+        
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            attribute vec2 vPosition;
+            uniform vec2 vCenter;
+            uniform float vTheta;
+            varying vec4 color;
+
+            void main()
+            {
+                // translate vertex around center coordinates
+                vec2 newPos = vPosition + vCenter;
+
+                // convert to y and x
+                float s = sin(vTheta);
+                float c = cos(vTheta);
+
+                // calculate new vertex positions
+	            vec2 newPos2;
+	            newPos2.x = c * newPos.x - s * newPos.y;
+	            newPos2.y = s * newPos.x + c * newPos.y;
+
+                // update vertex coordinates from translation and rotation
+                gl_Position = vec4(newPos2, 0.0, 1.0);
+
+                // update colors of geometry using quadratic function
+                color = vec4(newPos2.x * newPos2.x, newPos2.y * newPos2.y, 0.5, 1.0);
+            }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec4 color;
+
+            void main()
+            {
+                gl_FragColor = color;
+            }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="kaleidescope.js"></script>
+
+        <style>
+            body
+            {
+                font-style: normal;
+                font-family: sans-serif;
+                color: #222;
+                padding: 0 1em;
+                line-height: 1.25em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>HW1: Kaleidescope</h1>
+        <h2>Color Function</h2>
+            <p style="width: 500px;">
+                For my color function I went with a quadratic. The x values are for red and the 
+                y values are for green. The value for blue is set at 0.5. As x approaches -1 and 1,
+                the amount of red increases and is inverse as it approaches 0. Same for y but instead 
+                for the color green. Thus, there are two locations where red is dominant in vertices, two 
+                for green, and in between there is a mixture of green and red all while the blue remains 
+                constant.
+            </p> 
+        <canvas id="gl-canvas" width="500" height="500" style="border:2px solid #000000;"> </canvas>
+    </body>
+</html>
