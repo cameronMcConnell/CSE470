@@ -1,3 +1,4 @@
+<!--Cameron McConnell-->
 <!DOCTYPE html>
 <html lang="en-us">
 	<head>
@@ -9,16 +10,23 @@
 			attribute vec4 vPosition;
 			attribute vec4 vColor;
 			varying vec4 fColor;
-			uniform vec3 vCenter;
-			uniform float vScale;
+			uniform mat4 modelView;
 
 			void main()
 			{
-				float x = ((vPosition.x - 0.5) + vCenter.x) * vScale;
-				float y = ((vPosition.y - 0.5) + vCenter.y) * vScale;
-				float z = ((vPosition.z - 0.5) + vCenter.z) * vScale;
-				fColor = vColor;
-				gl_Position = vec4(x,y,z,1.0);
+				
+				vec4 newPos = modelView * vPosition;
+
+				if ((newPos.x < 0.9 && newPos.x > -0.9) && (newPos.y < 0.9 && newPos.y > -0.9) && (newPos.z < 0.9 && newPos.z > -0.9))
+				{
+					fColor = vColor;
+				}
+				else
+				{
+					fColor = vec4(1,1,1,1);
+				}
+				
+				gl_Position = newPos;
 			}
 		</script>
 
@@ -51,15 +59,34 @@
   <body>
 		<h1>HW2: Spawn</h1>
 		<canvas id="gl-canvas" width="500" height="500" style="border:2px solid #000000;"></canvas>
-		<h2>Scale Slider</h2>
+		<h2>Description</h2>
+		<p style="width:500px">
+			This program generates a prototype cube centered at the origin. Given this
+			cube, they're n-1 cubes rendered behind it. These n-1 cubes are animated such that 
+			they all travel in the directon of some randomly generated vector. As the cubes are
+			translated, they're rotated in the direction of said vector as well. As they reach the 
+			edge of the canvas, they're rendered to be white. This is then repeated indefinetely unless
+			the user "clicks" within the bounds of the center cube. You can then "re-click" the center cube to start
+			the animation again.
+		</p>
+		<h3>Scale Slider</h3>
 		<div class="scale-container">
-			<input type="range" min="0.1" max="1" value="0.5" step="0.01" id="scale-slider">
+			<ul style="padding-left: 20px;"><li>Using this slider, the user can change the area of the cubes.</li></ul>
+			<input type="range" min="0.1" max="1" value="0.1" step="0.1" id="scale-slider">
 			<p>Scale-Factor: <span id="scale-value"></span></p>
 		</div>
-		<h2>KFT Step Slider</h2>
+		<h3>KFT Step Slider</h3>
 		<div class="kft-container">
-			<input type="range" min="0" max="1" value="0.005" step="0.001" id="kft-slider">
+			<ul style="padding-left: 20px;"><li>Using this slider, the user can change the speed of translation and rotation.</li></ul>
+			<input type="range" min="0.001" max="0.005" value="0.003" step="0.001" id="kft-slider">
 			<p>KFT-Step: <span id="kft-value"></span></p>
+		</div>
+		<h3>Number Of Cubes</h3>
+		<div class="nCubes-container">
+			<ul style="padding-left: 20px; width: 500px;">
+				<li>This input box allows you to change the number of animated cubes that are rendered (Minimum of 8).</li>
+			</ul>
+			<input type="number" value="8" min="8" id="num-cubes">
 		</div>
   </body>
 </html>
